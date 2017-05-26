@@ -80,11 +80,16 @@ class subBruteBase(Base):
 
     def run(self):
         try:
-            self.general_enum()
+            # self.general_enum()
             self.brute_domain()
 
         except Exception,e:
             pass
+    def get_result(self):
+        tmplist=[]
+        while (self.pool.result.empty() is False):
+            self.result.append(self.pool.result.get())
+        return self.result
 
     def init_dict(self):
         tmp_dict = {}
@@ -981,9 +986,11 @@ class subBruteBase(Base):
 
 
 def test_sub(domain,filename=None):
-    dict = os.path.join(dict_path,'subnames_full.txt')
+    dict = os.path.join(dict_path,'test.txt')
     tmp =subBruteBase(domain,dict=dict,filename=filename)
     tmp.run()
+    result=tmp.get_result()
+    print result
 def test_ds_walk(domain,filename=None):
     dict = os.path.join(dict_path, 'subnames_full.txt')
     tmp =subBruteBase(domain,dict=dict,filename=filename)

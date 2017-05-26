@@ -17,9 +17,10 @@ class Worker(Thread):
 
     lck = Lock()
 
-    def __init__(self, tasks,filename=None):
+    def __init__(self, tasks,result,filename=None):
         Thread.__init__(self)
         self.tasks = tasks
+        self.result=result
         self.daemon = True
         self.result_dict=os.path.join(result_path,filename)
         self.start()
@@ -36,17 +37,19 @@ class Worker(Thread):
                 if found_record:
                     Worker.lck.acquire()
                     # brtdata.append(found_record)
-                    self.write_csv(found_record)
+                    # self.write_csv(found_record)
+                    # print found_record
                     for r in found_record:
-                        data=[]
-                        data.append(r['Type'])
-                        data.append(r['Name'])
-                        data.append(r['Address'])
-                        data.append(r['Target'])
-                        data.append(r['Port'])
-                        data.append(r['String'])
-                        msg=' '.join(data)
-                        tmp.print_good(msg)
+                        # data=[]
+                        # data.append(r['Type'])
+                        # data.append(r['Name'])
+                        # data.append(r['Address'])
+                        # data.append(r['Target'])
+                        # data.append(r['Port'])
+                        # data.append(r['String'])
+                        self.result.put(r)
+                        # msg=' '.join(data)
+                        # tmp.print_good(msg)
                         # # if type(r).__name__ == "dict":
                         # #     for k, v in r.iteritems():
                         #         tmp.print_good("\t{0}:{1}".format(k, v))
@@ -85,8 +88,9 @@ class ThreadPool:
             tmp=Base()
             filename=tmp.get_random_str(10)+'.csv'
         self.tasks = Queue(num_threads)
+        self.result = Queue()
         for _ in range(num_threads):
-            Worker(self.tasks,filename)
+            Worker(self.tasks,self.result,filename)
 
     def add_task(self,
                  func,

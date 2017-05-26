@@ -83,7 +83,7 @@ class Begin(Base):
                 tmp=self.unique_file()
                 if tmp !='error':
                     self.print_good('removing duplicate records sucessful!')
-                    self.print_info('saving {0} records the result at {1}' % (tmp,self.file_result))
+                    self.print_good("saving %s records the result at %s" % (tmp,self.file_result))
                 else:
                     self.print_error('removing duplicate records error!')
             else:
